@@ -1,7 +1,12 @@
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 import MutationObserver from "mutationobserver-shim";
-import { render, screen, waitFor } from "@testing-library/react";
+import {
+  queryAllByTestId,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import CheckoutForm from "./CheckoutForm";
 import userEvent from "@testing-library/user-event";
 
@@ -31,19 +36,19 @@ test("shows success message on submit with form details", async () => {
   const submitButton = screen.getByRole("button");
   userEvent.click(submitButton);
 
-  await waitFor(() => {
-    const firstNameDisplay = screen.queryByText("leahmarie");
-    const lastNameDisplay = screen.queryByText("baller");
-    const addressDisplay = screen.getByText("1234 Street Ave.");
-    const cityDisplay = screen.queryByText("Chicago");
-    const stateDisplay = screen.queryByText("Illinois");
-    const zipDisplay = screen.queryByText("66666");
+  const successMessage = queryAllByTestId("successMessage");
 
-    expect(firstNameDisplay).toBeInTheDocument();
-    expect(lastNameDisplay).toBeInTheDocument();
-    expect(addressDisplay).toBeInTheDocument();
-    expect(cityDisplay).toBeInTheDocument();
-    expect(stateDisplay).toBeInTheDocument();
-    expect(zipDisplay).toBeInTheDocument();
+  await waitFor(() => {
+    const successDisplay = screen.queryAllByText(
+      /You have ordered some plants! Woo-hoo!/i
+    );
+
+    expect(successDisplay).toBeInTheDocument();
+    expect(successDisplay).toHaveTextContent(/leahmarie/i);
+    expect(successDisplay).toHaveTextContent(/baller/i);
+    expect(successDisplay).toHaveTextContent(/1234 Street Ave./i);
+    expect(successDisplay).toHaveTextContent(/Chicago/i);
+    expect(successDisplay).toHaveTextContent(/Illinois/i);
+    expect(successDisplay).toHaveTextContent(/66666/i);
   });
 });
